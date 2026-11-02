@@ -132,7 +132,7 @@ go test -race -v ./...
 - **Fitur yang Diuji**:
   - `Set` & `Get`: Operasi baca-tulis standar $O(1)$.
   - `redis.Nil`: Handling idiomatik Go untuk membedakan antara key tidak ada vs string kosong.
-  - `SetEx` (TTL): Caching dengan masa berlaku kedaluwarsa.
+  - `Set` dengan TTL: Caching dengan masa berlaku kedaluwarsa (menggantikan `SetEx` yang deprecated).
   - `SetNX`: Set if Not Exists untuk mekanisme dasar **Distributed Lock**.
   - `Incr`, `IncrBy`, `Decr`: Counter atomik tanpa race condition.
   - `MSet`, `MGet`: Operasi batch multi-key untuk menghemat Round-Trip Time.

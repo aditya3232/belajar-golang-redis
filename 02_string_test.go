@@ -71,11 +71,15 @@ func TestStringExpirationTTL(t *testing.T) {
 
 	// Fundamental Expiration (TTL - Time to Live):
 	// Digunakan dalam pattern Cache-Aside untuk mencegah data stale selamanya di memori.
+	// Catatan: Sejak Redis 2.6.12, perintah SET telah mendukung opsi kedaluwarsa langsung
+	// (SET key value EX seconds). Oleh karena itu, di go-redis v9 disarankan menggunakan
+	// `client.Set(ctx, key, val, ttl)` alih-alih `client.SetEx` yang sudah deprecated.
+	//
 	// Redis memiliki dua mekanisme pembersihan key kedaluwarsa:
 	// 1. Passive / Lazy: Dihapus saat key tersebut diakses (GET) dan dideteksi sudah expire.
 	// 2. Active: Redis secara periodik mengambil sampel key acak dan menghapus yang sudah expire.
 	ttl := 2 * time.Second
-	err := client.SetEx(ctx, key, "Data Sementara", ttl).Err()
+	err := client.Set(ctx, key, "Data Sementara", ttl).Err()
 	assert.NoError(t, err)
 
 	// Cek sisa waktu TTL dengan TTL()
