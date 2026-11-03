@@ -82,13 +82,26 @@ func TestSortedSetLeaderboard(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, int64(2), budiRank, "Budi berada di peringkat ke-3 (index 2)")
 
-	// 6. ZREVRANGE: Mengambil TOP 3 Pemain Global (Peringkat 0 sampai 2)
-	top3, err := client.ZRevRange(ctx, leaderboardKey, 0, 2).Result()
+	// 6. Mengambil TOP 3 Pemain Global (Peringkat 0 sampai 2)
+	// Catatan Modern: Sejak Redis 6.2.0, perintah ZREVRANGE telah digantikan oleh ZRANGE
+	// dengan argumen REV. Di go-redis, gunakan ZRangeArgs dengan Rev: true.
+	top3, err := client.ZRangeArgs(ctx, redis.ZRangeArgs{
+		Key:   leaderboardKey,
+		Start: 0,
+		Stop:  2,
+		Rev:   true,
+	}).Result()
 	assert.NoError(t, err)
 	assert.Equal(t, []string{"Citra", "Dian", "Budi"}, top3)
 
-	// 7. ZREVRANGEWITHSCORES: Mengambil data pemain sekaligus skornya
-	top3WithScores, err := client.ZRevRangeWithScores(ctx, leaderboardKey, 0, 2).Result()
+	// 7. Mengambil data pemain sekaligus skornya
+	// Menggunakan ZRangeArgsWithScores dengan opsi Rev: true (menggantikan ZRevRangeWithScores yang deprecated)
+	top3WithScores, err := client.ZRangeArgsWithScores(ctx, redis.ZRangeArgs{
+		Key:   leaderboardKey,
+		Start: 0,
+		Stop:  2,
+		Rev:   true,
+	}).Result()
 	assert.NoError(t, err)
 	assert.Len(t, top3WithScores, 3)
 
@@ -115,11 +128,15 @@ func TestSortedSetRangeByScore(t *testing.T) {
 		redis.Z{Score: 300000, Member: "Sepatu Sekolah"},
 	).Err()
 
-	// Fundamental ZRANGEBYSCORE:
+	// Fundamental ZRangeArgs dengan ByScore:
+	// Sejak Redis 6.2.0, perintah ZRANGEBYSCORE telah digantikan oleh ZRANGE dengan opsi BYSCORE.
+	// Di go-redis, gunakan `client.ZRangeArgs` dengan `ByScore: true`.
 	// Mencari semua produk dengan harga antara 20.000 sampai 150.000
-	products, err := client.ZRangeByScore(ctx, priceRangeKey, &redis.ZRangeBy{
-		Min: "20000",
-		Max: "150000",
+	products, err := client.ZRangeArgs(ctx, redis.ZRangeArgs{
+		Key:     priceRangeKey,
+		Start:   20000,
+		Stop:    150000,
+		ByScore: true,
 	}).Result()
 
 	assert.NoError(t, err)

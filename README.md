@@ -189,9 +189,9 @@ go test -race -v ./...
 - **Fitur yang Diuji**:
   - `ZAdd`: Menambahkan member dan skor.
   - `ZIncrBy`: Menambah skor secara atomik.
-  - `ZRevRange`: Mengambil Top $N$ leaderboard game/skor tertinggi.
+  - `ZRangeArgs` (Rev): Mengambil Top $N$ leaderboard game/skor tertinggi (menggantikan `ZRevRange` yang deprecated).
   - `ZRevRank`: Mengetahui peringkat user secara real-time.
-  - `ZRangeByScore`: Filter data berdasarkan batas harga/skor minimum & maksimum.
+  - `ZRangeArgs` (ByScore): Filter data berdasarkan batas harga/skor minimum & maksimum (menggantikan `ZRangeByScore` yang deprecated).
 - **Perintah Menjalankan**:
   ```bash
   go test -v -run "TestSortedSet"
@@ -328,7 +328,7 @@ go test -race -v ./...
 | Kumpulan Nilai Unik / Tagging / Blacklist | **Set (`SADD`)** | Hash |
 | Rekomendasi Teman / Mutual Friends | **Set (`SINTER`)** | Graph |
 | Papan Skor / Leaderboard Game | **Sorted Set (`ZADD`)** | SQL Index |
-| Filter Produk Berdasarkan Rentang Harga | **Sorted Set (`ZRANGEBYSCORE`)** | SQL Index |
+| Filter Produk Berdasarkan Rentang Harga | **Sorted Set (`ZRANGE BYSCORE`)** | SQL Index |
 | Entitas Objek / Struct (User, Produk) | **Hash (`HSET`, `HGETALL`)** | String (JSON) |
 | Pencarian Driver / Toko Terdekat | **GeoPoint (`GEOSEARCH`)** | PostGIS |
 | Menghitung Pengunjung Unik Skala Besar (DAU) | **HyperLogLog (`PFADD`, `PFCOUNT`)** | Set (boros RAM) |
